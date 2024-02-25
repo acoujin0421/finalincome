@@ -1,1 +1,143 @@
-1
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>똥주 부부 급여 계산기</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  body { 
+    font-family: 'Noto Sans KR', sans-serif; 
+    margin: 0; 
+    padding: 20px; 
+    background-color: #f5f5f5; 
+    color: #333;
+  }
+  .container { 
+    max-width: 480px; 
+    margin: auto; 
+    background: #fff; 
+    padding: 20px; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+  .input-group { 
+    margin-bottom: 20px; 
+  }
+  .input-group label { 
+    display: block; 
+    margin-bottom: 5px; 
+    font-weight: 700; 
+  }
+  .input-group input { 
+    width: 100%; 
+    padding: 10px; 
+    box-sizing: border-box; 
+    border: 1px solid #ccc; 
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  .result { 
+    margin-top: 20px; 
+    font-size: 24px; 
+    font-weight: bold; 
+    text-align: center; 
+    color: #007BFF;
+  }
+  button { 
+    width: 100%; 
+    padding: 10px 0; 
+    font-size: 16px; 
+    cursor: pointer; 
+    border: none; 
+    border-radius: 4px; 
+    background-color: #007BFF; 
+    color: white; 
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>똥주 부부 급여 계산기</h1>
+  <div class="input-group">
+    <label for="salary1">공주 급여</label>
+    <input type="text" id="salary1" placeholder="급여 입력" onkeyup="formatNumber(this)">
+  </div>
+  <div class="input-group">
+    <label for="salary2">동진 급여</label>
+    <input type="text" id="salary2" placeholder="급여 입력" onkeyup="formatNumber(this)">
+  </div>
+  <div class="input-group">
+    <label for="credit1">공주 신한(신용카드1) 예상 지출</label>
+    <input type="text" id="credit1" placeholder="예상 지출 입력" onkeyup="formatNumber(this)">
+  </div>
+  <div class="input-group">
+    <label for="credit2">공주 부산(신용카드2) 예상 지출</label>
+    <input type="text" id="credit2" placeholder="예상 지출 입력" onkeyup="formatNumber(this)">
+  </div>
+  <div class="input-group">
+    <label for="credit3">동진 국민(신용카드3) 예상 지출</label>
+    <input type="text" id="credit3" placeholder="예상 지출 입력" onkeyup="formatNumber(this)">
+  </div>
+  <button onclick="calculate()">계산하기</button>
+  <div class="result" id="result">이번 달 여윳돈: </div>
+</div>
+<script>
+  const fixedExpenses = {
+    "공주": {
+      "주택담보대출": 1300000,
+      "급식비": 10000,
+      "도시가스": 40000,
+      "교사노조회비": 10000,
+      "폰요금": 13000,
+      "실비보험": 14920,
+      "AXA운전자보험": 12600,
+      "쿠팡회원비": 4990
+    },
+    "동진": {
+      "메리츠보험": 70000,
+      "현대해상운전자보험": 20000,
+      "코웨이렌탈": 70000,
+      "폰요금": 25000,
+      "교사노조회비": 10000,
+      "양압기": 20000,
+      "급식비": 80000,
+      "하이패스": 100000,
+      "복권구입": 40000
+    }
+  };
+
+  function calculateTotalFixedExpenses(expenses) {
+    return Object.values(expenses).reduce((acc, value) => acc + value, 0);
+  }
+
+  function formatNumber(input) {
+    let value = input.value.replace(/\D/g, "");
+    let formatted = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    input.value = formatted;
+  }
+
+  function unformatNumber(formatted) {
+    return parseInt(formatted.replace(/,/g, ''), 10);
+  }
+
+  function calculate() {
+    const totalFixedExpenses1 = calculateTotalFixedExpenses(fixedExpenses["공주"]);
+    const totalFixedExpenses2 = calculateTotalFixedExpenses(fixedExpenses["동진"]);
+    const salary1 = unformatNumber(document.getElementById('salary1').value) || 0;
+    const salary2 = unformatNumber(document.getElementById('salary2').value) || 0;
+    const credit1 = unformatNumber(document.getElementById('credit1').value) || 0;
+    const credit2 = unformatNumber(document.getElementById('credit2').value) || 0;
+    const credit3 = unformatNumber(document.getElementById('credit3').value) || 0;
+
+    const totalIncome = salary1 + salary2;
+    const totalFixedExpenses = totalFixedExpenses1 + totalFixedExpenses2;
+    const totalCreditExpenses = credit1 + credit2 + credit3;
+    const remainingMoney = totalIncome - totalFixedExpenses - totalCreditExpenses;
+
+    document.getElementById('result').textContent = '이번 달 여윳돈: ' + remainingMoney.toLocaleString() + '원';
+  }
+</script>
+</body>
+</html>
